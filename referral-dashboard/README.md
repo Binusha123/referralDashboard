@@ -174,7 +174,7 @@ GET /api/referrals?id=48
 ### Clone Repository
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/Binusha123/referralDashboard.git
 ```
 
 ### Navigate to Project
