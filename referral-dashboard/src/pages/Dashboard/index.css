@@ -1,0 +1,17 @@
+.dashboard-container {
+  min-height: 100vh;
+  background: #f5f7fb;
+  padding: 24px;
+}
+
+.dashboard-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.dashboard-subtitle {
+  color: #64748b;
+  margin-bottom: 32px;
+}
