@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
+import "./index.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -9,8 +10,14 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const submitForm = async e => {
-    e.preventDefault();
+  const token = Cookies.get("jwt_token");
+
+  if (token) {
+    return <Navigate to="/" replace />;
+  }
+
+  const submitForm = async event => {
+    event.preventDefault();
 
     const userDetails = {
       email,
@@ -28,15 +35,24 @@ const Login = () => {
       body: JSON.stringify(userDetails),
     };
 
-    const response = await fetch(url, options);
-    const data = await response.json();
+    try {
+      const response = await fetch(url, options);
+      const data = await response.json();
 
-    if (response.ok) {
-      Cookies.set("jwt_token", data.data.token);
+      if (response.ok) {
+        setError("");
 
-      navigate("/");
-    } else {
-      setError(data.message);
+        Cookies.set("jwt_token", data.data.token, {
+          expires: 7,
+        });
+
+        navigate("/", { replace: true });
+      } else {
+        setError(data.message || "Invalid credentials");
+      }
+    } catch (err) {
+      console.log(err);
+      setError("Unable to connect. Please try again.");
     }
   };
 
@@ -46,27 +62,36 @@ const Login = () => {
 
       <p>Sign in to open your referral dashboard.</p>
 
-      <form onSubmit={submitForm}>
-        <label htmlFor="email">Email</label>
+      <form className="login-form" onSubmit={submitForm}>
+        <div className="input-group">
+          <label htmlFor="email">Email</label>
 
-        <input
-          type="email"
-          id="email"
-          value={email}
-          placeholder="you@example.com"
-          onChange={e => setEmail(e.target.value)}
-        />
+          <input
+            type="email"
+            id="email"
+            value={email}
+            placeholder="you@example.com"
+            onChange={event => setEmail(event.target.value)}
+            required
+          />
+        </div>
 
-        <label htmlFor="password">Password</label>
+        <div className="input-group">
+          <label htmlFor="password">Password</label>
 
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-        />
+          <input
+            type="password"
+            id="password"
+            value={password}
+            placeholder="********"
+            onChange={event => setPassword(event.target.value)}
+            required
+          />
+        </div>
 
-        <button type="submit">Sign in</button>
+        <button type="submit" className="button">
+          Sign in
+        </button>
 
         {error && <p className="error-msg">{error}</p>}
       </form>
